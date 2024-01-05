@@ -13,3 +13,4 @@ local rb = b:rotateClockwise(r)
 print(rb.q:toString())
 local rm = rotation:newFromEulerAngle321(rb:getEulerAngle321())
 print(rm.q:toString())
+

@@ -1,6 +1,6 @@
 local rotation = {}
 
-local quaternion = require "lib/quaternion"
+local quaternion = require "./lib/quaternion"
 local mcos = math.cos
 local msin = math.sin
 local matan2 = math.atan2
@@ -38,10 +38,17 @@ function rotation:newFromQuaternion(p1,p2,p3,p4,o)
     
     if type(p1) == "table" then
         --quaternion
-        w = p1[1]
-        x = p1[2]
-        y = p1[3]
-        z = p1[4]
+        if type(p1.w) == "number" then
+            w = p1.w
+            x = p1.x
+            y = p1.y
+            z = p1.z
+        else
+            w = p1[1]
+            x = p1[2]
+            y = p1[3]
+            z = p1[4]
+        end
     elseif type(p1) == "number" then
         w = p1
         x = p2
@@ -132,22 +139,22 @@ function rotation:getEulerAngle321(o)-- not recommended cause it causes gimbal l
 
     local sp = sqrt(1+2*(q[1]*q[3]+q[2]*q[4]))
     local cp = sqrt(1-2*(q[1]*q[3]+q[2]*q[4]))
-    o.pitch = -(2*matan2(sp,cp) - pi/2)
+    o[2] = 2*matan2(sp,cp) - pi/2
     if test > 0.499 then
-        o.roll = 0
-        o.yaw = -2*matan2(q[2],q[1])
-        o.pitch = pi/2
+        o[1] = 0
+        o[3] = -2*matan2(q[2],q[1])
+        o[2] = pi/2
     elseif test < -0.499 then
-        o.roll = 0
-        o.yaw = 2*matan2(q[2],q[1])
-        o.pitch = pi/2
+        o[1] = 0
+        o[3] = 2*matan2(q[2],q[1])
+        o[2] = pi/2
     else
-        o.roll = matan2(2*(q[1]*q[2]+q[3]*q[4]),1-2*(q[2]*q[2]+q[3]*q[3]))
-        o.yaw = matan2(2*(q[1]*q[4]+q[2]*q[3]),1-2*(q[3]*q[3]+q[4]*q[4]))
+        o[1] = matan2(2*(q[1]*q[2]+q[3]*q[4]),1-2*(q[2]*q[2]+q[3]*q[3]))
+        o[3] = matan2(2*(q[1]*q[4]+q[2]*q[3]),1-2*(q[3]*q[3]+q[4]*q[4]))
     end
-    o[1] = o.roll
-    o[2] = o.pitch
-    o[3] = o.yaw
+    o.roll = o[1]
+    o.pitch = o[3]
+    o.yaw = o[2]
     return o
 end
 

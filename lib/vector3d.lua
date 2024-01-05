@@ -1,6 +1,6 @@
 local vector3d = {}
 
-local quaternion = require "lib/quaternion"
+local quaternion = require "./lib/quaternion"
 local mcos = math.cos
 local msin = math.sin
 local matan2 = math.atan2
@@ -77,6 +77,10 @@ end
 
 function vector3d:getQuaternion() 
     return quaternion:new(R.q)
+end
+
+function vector3d:translate(v) 
+    return vector3d:new(self.q:sum(v.q))
 end
 
 return vector3d
